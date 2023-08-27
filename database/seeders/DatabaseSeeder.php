@@ -13,8 +13,11 @@ class DatabaseSeeder extends Seeder {
     public function run() {
         // \App\Models\User::factory(10)->create();
         $this->call( [
-            UserSeeder::class,
+
+            //if i want to assign all role to default user then i have to use RolePermissionSeeder first then i have to use UserSeeder class
             RolePermissionSeeder::class,
+            UserSeeder::class,
+
         ] );
     }
 }

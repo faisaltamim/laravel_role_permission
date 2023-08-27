@@ -15,55 +15,54 @@ class RolePermissionSeeder extends Seeder {
     public function run() {
 
         // Create Roles
-        $roleSuperAdmin = Role::create( ['name' => 'superadmin'] );
-        $roleAdmin      = Role::create( ['name' => 'admin'] );
-        $roleEditor     = Role::create( ['name' => 'editor'] );
-        $roleUser       = Role::create( ['name' => 'user'] );
+        $roleSuperAdmin = Role::create( ['name' => 'superadmin', 'guard_name' => 'web'] );
+        $roleAdmin      = Role::create( ['name' => 'admin', 'guard_name' => 'web'] );
+        $roleEditor     = Role::create( ['name' => 'editor', 'guard_name' => 'web'] );
+        $roleUser       = Role::create( ['name' => 'user', 'guard_name' => 'web'] );
 
         // Permission List as array
         $permissions = [
 
             // Dashboard
-            'dashboard.view',
-
-            // Blog Permissions
-            'blog.create',
-            'blog.view',
-            'blog.edit',
-            'blog.delete',
-            'blog.approve',
+            'dashboard' => ['dashboard.view',
+                'dashboard.edit',
+            ],
 
             // Admin Permissions
-            'admin.create',
-            'admin.view',
-            'admin.edit',
-            'admin.delete',
-            'admin.approve',
+            'admin'     => ['admin.create',
+                'admin.view',
+                'admin.edit',
+                'admin.delete',
+                'admin.approve'],
 
             // Role Permissions
-            'role.create',
-            'role.view',
-            'role.edit',
-            'role.delete',
-            'role.approve',
+            'role'      => [
+                'role.create',
+                'role.view',
+                'role.edit',
+                'role.delete',
+                'role.approve',
+            ],
+
+            // Blog Permissions
+            'blog'      => ['blog.create',
+                'blog.view',
+                'blog.edit',
+                'blog.delete',
+                'blog.approve'],
 
             // Profile Permissions
-            'profile.view',
-            'profile.edit',
+            'profile'   => ['profile.view',
+                'profile.edit'],
         ];
 
-        // Create and Assign Permissions
-        // for ( $i = 0; $i < count( $permissions ); $i++ ) {
-        //     // Create Permission
-        //     $permission = Permission::create( ['name' => $permissions[$i]] );
-        //     $roleSuperAdmin->givePermissionTo( $permission );
-        //     $permission->assignRole( $roleSuperAdmin );
-        // }
-        foreach ( $permissions as $permission ) {
+        foreach ( $permissions as $permission_grp => $all_permission ) {
             // Create Permission
-            $permission = Permission::create( ['name' => $permission] );
-            $roleSuperAdmin->givePermissionTo( $permission );
-            $permission->assignRole( $roleSuperAdmin );
+            foreach ( $all_permission as $permission ) {
+                $permission = Permission::create( ['name' => $permission, 'group_name' => $permission_grp, 'guard_name' => 'web'] );
+                $roleSuperAdmin->givePermissionTo( $permission );
+                $permission->assignRole( $roleSuperAdmin );
+            }
         }
     }
 }
